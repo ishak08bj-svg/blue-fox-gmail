@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Inbox</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+<div class="header">Inbox - <span id="user"></span></div>
+<div id="mails"></div>
+<a class="compose" href="compose.html">+ Compose</a>
+
+<script>
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyA61F3EJDyLbAFczJfNhWHC0Crx7RuDtz4", authDomain: ",
+  authDomain: "xxxxxx-a9a7c.firebaseapp.com",
+  projectId: "xxxxxx-a9a7c",
+  storageBucket: "xxxxxx-a9a7c.firebasestorage.app",
+  messagingSenderId:  "609177757611",
+  appId: "1:609177757611:web:1b1d5b6d423a81f3f654ee"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+const user = localStorage.getItem("user");
+if(!user){
+  alert("Please login first");
+  location.href="index.html";
+}
+document.getElementById("user").innerText = user;
+
+db.collection("mails")
+  .where("to","==",user)
+  .orderBy("time")
+  .onSnapshot(snapshot=>{
+    const box = document.getElementById("mails");
+    box.innerHTML="";
+    if(snapshot.empty) box.innerHTML="<p style='padding:10px'>No messages</p>";
+    snapshot.forEach(doc=>{
+      const m = doc.data();
+      box.innerHTML += `<div class="mail"><b>From:</b> ${m.from}<br>${m.text}</div>`;
+    });
+  });
+</script>
+
+</body>
+</html>
